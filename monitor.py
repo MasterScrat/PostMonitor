@@ -1,3 +1,4 @@
+import sys
 import json
 import urllib
 import urllib2
@@ -18,11 +19,11 @@ def hn_stats(url):
 def print_stats(url):
 	if "reddit.com" in url:
 		results = reddit_stats(url)
-		print "Reddit:"
+		print "Reddit:",
 
 	elif "hacker-news.firebaseio.com" in url:
 		results = hn_stats(url)
-		print "HackerNews:"
+		print "HackerNews:",
 
 	else:
 		print "Unkown site."
@@ -30,6 +31,14 @@ def print_stats(url):
 
 	print results[0], 'points,', results[1], 'comments'
 
-print_stats("http://www.reddit.com/r/github/comments/4hzlt6/a_chrome_extension_to_display_project_activity_on.json")
-print_stats("https://www.reddit.com/r/javascript/comments/4hzkxh/a_chrome_extension_to_display_project_activity_on.json")
-print_stats("https://hacker-news.firebaseio.com/v0/item/11635339.json")
+
+if len(sys.argv) == 2:
+	conf_file = sys.argv[1]
+
+	with open(conf_file, 'r') as f:
+		conf = json.loads(f.read())
+
+		for url in conf['urls']:
+			print_stats(url)
+
+	f.closed
