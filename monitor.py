@@ -11,6 +11,15 @@ from tinydb import TinyDB, where
 # Multiple Projects, each with multiple Events (release, blog post...), each with multiple Links (Reddit, HN, FB, Twitter...)
 # A Record is a set of numbers related to a Link at a point in time.
 
+# TODO
+# - single cong file for all projects
+# - add Twitter, FB support (for Twitter: https://github.com/bear/python-twitter)
+# - run as a daemon, updating records periodically (use http://stackoverflow.com/questions/16420092/how-to-make-python-script-run-as-service ?)
+# - web interface?
+# - save comments?
+# - keep conf in DB
+# - automatically get new posts from Reddit/HN from user page?
+
 db = TinyDB('records.json')
 
 def main():
@@ -33,6 +42,7 @@ class Record:
 		self.score = score
 		self.num_comments = num_comments
 		self.timestamp = timestamp
+		# TODO project, event, link_url, target_url, section (eg subreddit)
 
 	def __str__(self):
 		return self.site + ': ' + str(self.score) + ' points, ' + str(self.num_comments) + ' comments'
@@ -58,6 +68,10 @@ def get_record(url):
 		record = hn_stats('https://hacker-news.firebaseio.com/v0/item/' + url.split("=")[1] + '.json')
 		record.site = "HackerNews"
 
+	elif "api.github.com" in url:
+		record = gh_stats(url)
+		record.site = "GitHub"
+
 	else:
 		raise NameError('Unkown site URL ' + url)
 
@@ -71,6 +85,10 @@ def reddit_stats(url):
 def hn_stats(url):
 	data = json.loads(read_url(url))
 	return Record(data['score'], data['descendants'])
+
+def gh_stats(url):
+	data = json.loads(read_url(url))
+	return Record(data['watchers_count'], data['subscribers_count'])
 
 def read_url(url):
 	hdr = { 'User-Agent' : 'PostMonitor' }
@@ -92,7 +110,3 @@ def load_config():
 		exit(0)
 
 main()
-
-
-
-
