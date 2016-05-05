@@ -8,62 +8,79 @@ import time
 
 from tinydb import TinyDB, where
 
-def read_url(url):
-	hdr = { 'User-Agent' : 'PostMonitor' }
-	req = urllib2.Request(url, headers=hdr)
-	return urllib2.urlopen(req).read()
+# Multiple Projects, each with multiple Events (release, blog post...), each with multiple Links (Reddit, HN, FB, Twitter...)
+# A Record is a set of numbers related to a Link at a point in time.
 
-def reddit_stats(url):
-	data = json.loads(read_url(url))
-	return [data[0]['data']['children'][0]['data']['score'], data[0]['data']['children'][0]['data']['num_comments']]
+db = TinyDB('db.json')
 
-def hn_stats(url):
-	data = json.loads(read_url(url))
-	return [data['score'], data['descendants']]
+def main():
+	conf = load_config()
+
+	print '=', conf['name'], '='
+
+	for url in conf['urls']:
+		print get_stats(url)
+
+
+
+class Record:
+	def __init__(self, score=0, num_comments=0, site='unknown site'):
+		self.site = site
+		self.score = score
+		self.num_comments = num_comments
+
+	def __str__(self):
+		return self.site + ': ' + str(self.score) + ' points, ' + str(self.num_comments) + ' comments'
+
+
 
 def get_stats(url):
 	if "reddit.com" in url:
-		results = reddit_stats(url)
-		site = "Reddit"
+		record = reddit_stats(url)
+		record.site = "Reddit"
 
 	elif "hacker-news.firebaseio.com" in url:
-		results = hn_stats(url)
-		site = "HackerNews"
+		record = hn_stats(url)
+		record.site = "HackerNews"
 
 	elif "news.ycombinator.com" in url:
-		results = hn_stats('https://hacker-news.firebaseio.com/v0/item/' + url.split("=")[1] + '.json')
-		site = "HackerNews"
+		record = hn_stats('https://hacker-news.firebaseio.com/v0/item/' + url.split("=")[1] + '.json')
+		record.site = "HackerNews"
 
 	else:
 		print "Unkown site."
 		return
 
-	db.insert({'site': site, 'points': results[0], 'comments': results[0], 'time': time.time()})
+	#db.insert({'site': site, 'points': results[0], 'comments': results[0], 'time': time.time()})
 
-	return [site, results[0], results[1]]
+	return record
 
-# TODO time to move to proper class's!
-def print_stats(url):
-	stats = get_stats(url)
-	print stats[0], ':', stats[1], 'points,', stats[2], 'comments'
+def reddit_stats(url):
+	data = json.loads(read_url(url))
+	data = data[0]['data']['children'][0]['data']
+	return Record(data['score'], data['num_comments'])
 
+def hn_stats(url):
+	data = json.loads(read_url(url))
+	return Record(data['score'], data['descendants'])
 
-db = TinyDB('db.json')
+def read_url(url):
+	hdr = { 'User-Agent' : 'PostMonitor' }
+	req = urllib2.Request(url, headers=hdr)
+	return urllib2.urlopen(req).read()
 
-if len(sys.argv) == 2:
-	conf_file = sys.argv[1]
+def load_config():
+	if len(sys.argv) == 2:
+		with open(sys.argv[1], 'r') as f:
+			conf = json.loads(f.read())
+		f.closed
+		return conf
 
-	with open(conf_file, 'r') as f:
-		conf = json.loads(f.read())
-		print '=', conf['name'], '='
-		for url in conf['urls']:
-			print_stats(url)
-	f.closed
+	else:
+		print 'Usage: ./monitor.py conf/conf_file.json'
+		exit(0)
 
-else:
-	print 'Usage: ./monitor.py conf/conf_file.json'
-	exit(0)
-
+main()
 
 
 
