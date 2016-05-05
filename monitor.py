@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sys
 import json
 import urllib
@@ -42,3 +44,5 @@ if len(sys.argv) == 2:
 			print_stats(url)
 
 	f.closed
+else:
+	print 'Usage: ./monitor.py conf/conf_file.json'
