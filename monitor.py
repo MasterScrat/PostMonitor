@@ -27,6 +27,10 @@ def print_stats(url):
 		results = hn_stats(url)
 		print "HackerNews:",
 
+	elif "news.ycombinator.com" in url:
+		results = hn_stats('https://hacker-news.firebaseio.com/v0/item/' + url.split("=")[1] + '.json')
+		print "HackerNews:",
+
 	else:
 		print "Unkown site."
 		return
@@ -39,6 +43,8 @@ if len(sys.argv) == 2:
 
 	with open(conf_file, 'r') as f:
 		conf = json.loads(f.read())
+
+		print '=', conf['name'], '='
 
 		for url in conf['urls']:
 			print_stats(url)

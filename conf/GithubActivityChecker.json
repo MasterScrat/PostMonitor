@@ -1,3 +1,8 @@
 {
-	"urls": ["http://www.reddit.com/r/github/comments/4hzlt6/a_chrome_extension_to_display_project_activity_on.json", "https://www.reddit.com/r/javascript/comments/4hzkxh/a_chrome_extension_to_display_project_activity_on.json", "https://hacker-news.firebaseio.com/v0/item/11635339.json"]
+	"name": "Github Activity Checker",
+	"urls": [
+		"http://www.reddit.com/r/github/comments/4hzlt6/a_chrome_extension_to_display_project_activity_on.json", 
+		"https://www.reddit.com/r/javascript/comments/4hzkxh/a_chrome_extension_to_display_project_activity_on.json", 
+		"https://news.ycombinator.com/item?id=11635339"
+	]
 }
