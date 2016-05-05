@@ -11,31 +11,42 @@ from tinydb import TinyDB, where
 # Multiple Projects, each with multiple Events (release, blog post...), each with multiple Links (Reddit, HN, FB, Twitter...)
 # A Record is a set of numbers related to a Link at a point in time.
 
-db = TinyDB('db.json')
+db = TinyDB('records.json')
 
 def main():
 	conf = load_config()
 
-	print '=', conf['name'], '='
+	print '===', conf['project_name'], '==='
 
-	for url in conf['urls']:
-		print get_stats(url)
+	for event in conf['events']:
+		print '[', event['event_name'], ']'
 
-
+		for url in event['urls']:
+			record = get_record(url)
+			db.insert(record.to_json())
+			print record
+		
 
 class Record:
-	def __init__(self, score=0, num_comments=0, site='unknown site'):
+	def __init__(self, score=0, num_comments=0, site='unknown site', timestamp=time.time()):
 		self.site = site
 		self.score = score
 		self.num_comments = num_comments
+		self.timestamp = timestamp
 
 	def __str__(self):
 		return self.site + ': ' + str(self.score) + ' points, ' + str(self.num_comments) + ' comments'
 
+	def to_json(self):
+		return json.loads(json.dumps(self, default=lambda o: o.__dict__))
 
 
-def get_stats(url):
+
+def get_record(url):
 	if "reddit.com" in url:
+		if ".json" not in url:
+			url = url + '.json'
+
 		record = reddit_stats(url)
 		record.site = "Reddit"
 
@@ -48,10 +59,7 @@ def get_stats(url):
 		record.site = "HackerNews"
 
 	else:
-		print "Unkown site."
-		return
-
-	#db.insert({'site': site, 'points': results[0], 'comments': results[0], 'time': time.time()})
+		raise NameError('Unkown site URL ' + url)
 
 	return record
 
@@ -71,9 +79,12 @@ def read_url(url):
 
 def load_config():
 	if len(sys.argv) == 2:
-		with open(sys.argv[1], 'r') as f:
+		project_conf = sys.argv[1]
+
+		with open(project_conf, 'r') as f:
 			conf = json.loads(f.read())
 		f.closed
+
 		return conf
 
 	else:

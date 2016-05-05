@@ -1,0 +1,28 @@
+{
+	"project_name": "Timelapses",
+
+	"events": [
+		{
+			"event_name": "Supermoon Rising over Lake Leman",
+			"urls": [
+				"https://www.reddit.com/r/schweiz/comments/2d6m85/supermoon_rising_over_lake_leman_oc_800x533/"
+			]
+		},
+
+		{
+			"event_name": "Sunset tonight from Chexbres, Switzerland",
+			"urls": [
+				"https://www.reddit.com/r/SkyPorn/comments/1tyhnv/sunset_tonight_from_chexbres_switzerland_oc/", 
+				"https://www.reddit.com/r/waterporn/comments/1tyhns/sunset_tonight_from_chexbres_switzerland_oc/"
+			]
+		},
+
+		{
+			"event_name": "Sunrise this morning over Lac Léman",
+			"urls": [
+				"https://www.reddit.com/r/gif/comments/1rwqk0/sunrise_this_morning_over_lac_l%C3%A9man_switzerland_oc/", 
+				"https://www.reddit.com/r/schweiz/comments/1rwde6/sunrise_this_morning_over_lac_l%C3%A9man_switzerland/"
+			]
+		}
+	]
+}
