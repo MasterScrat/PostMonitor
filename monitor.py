@@ -30,6 +30,7 @@ def main():
 
 def get_records():
 	conf = load_config()
+	timestamp = time.time()
 
 	print
 	print '===', conf['monitor_name'], '==='
@@ -43,20 +44,21 @@ def get_records():
 
 			for url in event['urls']:
 				record = get_record(url)
+				record.timestamp = timestamp
 				record.project = project['project_name']
 				record.event = event['event_name']
 				record.url = url
 
 				db.insert(record.to_json())
 				print record
-		
+
 
 class Record:
 	def __init__(self, score=0, num_comments=0):
 		self.score = score
 		self.num_comments = num_comments
 
-		self.timestamp = time.time()
+		self.timestamp = 0
 		self.site = ''
 		self.project = ''
 		self.event = ''
