@@ -16,17 +16,17 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 # TODO
 # - add WP, Twitter, FB support (for Twitter: https://github.com/bear/python-twitter), GitHub release pages?
 # - web interface?
-# - save comments?
 # - keep conf in DB
-# - automatically get new posts from Reddit/HN from user page?
 
 logging.basicConfig()
 db = TinyDB('records.json')
 
 def main():
+	"""
 	sched = BlockingScheduler()
 	sched.add_job(get_records, 'interval', id='monitor', seconds=5, max_instances=1)
-	sched.start()
+	sched.start()"""
+	get_records()
 
 def get_records():
 	conf = load_config()
@@ -43,17 +43,26 @@ def get_records():
 
 			for url in event['urls']:
 				record = get_record(url)
+				record.project = project['project_name']
+				record.event = event['event_name']
+				record.url = url
+
 				db.insert(record.to_json())
 				print record
 		
 
 class Record:
-	def __init__(self, score=0, num_comments=0, site='unknown site', timestamp=time.time()):
-		self.site = site
+	def __init__(self, score=0, num_comments=0):
 		self.score = score
 		self.num_comments = num_comments
-		self.timestamp = timestamp
-		# TODO project, event, link_url, target_url, section (eg subreddit)
+
+		self.timestamp = time.time()
+		self.site = ''
+		self.project = ''
+		self.event = ''
+		self.url = ''
+		self.target = '' # TODO
+		self.section = '' # TODO
 
 	def __str__(self):
 		return self.site + ': ' + str(self.score) + ' points, ' + str(self.num_comments) + ' comments'
