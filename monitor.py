@@ -13,7 +13,7 @@ from tinydb import TinyDB, where
 
 # TODO
 # - single cong file for all projects
-# - add Twitter, FB support (for Twitter: https://github.com/bear/python-twitter)
+# - add WP, Twitter, FB support (for Twitter: https://github.com/bear/python-twitter), GitHub release pages?
 # - run as a daemon, updating records periodically (use http://stackoverflow.com/questions/16420092/how-to-make-python-script-run-as-service ?)
 # - web interface?
 # - save comments?
