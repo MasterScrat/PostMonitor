@@ -17,11 +17,14 @@ def all():
 def series():
 	data = db.all()
 
+	# TODO shouldn't the DB do all that stuff for us?!
 	data = sorted(data, key=lambda r: r['timestamp']) 
 
+	# TODO should output series as 3 concatenated levels
 	grouped = {}
 	for record in data:
-		grouped.setdefault(to_unique_id(record), []).append(dict((key,value) for key, value in record.iteritems() if key in ('timestamp', 'score', 'num_comments')))
+		record_values = dict((key,value) for key, value in record.iteritems() if key in ('timestamp', 'score', 'num_comments'))
+		grouped.setdefault(to_unique_id(record), []).append(record_values)
 
 	return json.dumps(grouped, sort_keys=True, indent=4, separators=(',', ': '))
 

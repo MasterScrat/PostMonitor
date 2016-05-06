@@ -25,7 +25,8 @@ def main():
 	"""
 	sched = BlockingScheduler()
 	sched.add_job(get_records, 'interval', id='monitor', seconds=5, max_instances=1)
-	sched.start()"""
+	sched.start()
+	"""
 	get_records()
 
 def get_records():
