@@ -5,35 +5,46 @@ import json
 import urllib
 import urllib2
 import time
+import logging
 
 from tinydb import TinyDB, where
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # Multiple Projects, each with multiple Events (release, blog post...), each with multiple Links (Reddit, HN, FB, Twitter...)
 # A Record is a set of numbers related to a Link at a point in time.
 
 # TODO
-# - single cong file for all projects
 # - add WP, Twitter, FB support (for Twitter: https://github.com/bear/python-twitter), GitHub release pages?
-# - run as a daemon, updating records periodically (use http://stackoverflow.com/questions/16420092/how-to-make-python-script-run-as-service ?)
 # - web interface?
 # - save comments?
 # - keep conf in DB
 # - automatically get new posts from Reddit/HN from user page?
 
+logging.basicConfig()
 db = TinyDB('records.json')
 
 def main():
+	sched = BlockingScheduler()
+	sched.add_job(get_records, 'interval', id='monitor', seconds=5, max_instances=1)
+	sched.start()
+
+def get_records():
 	conf = load_config()
 
-	print '===', conf['project_name'], '==='
+	print
+	print '===', conf['monitor_name'], '==='
 
-	for event in conf['events']:
-		print '[', event['event_name'], ']'
+	for project in conf['projects']:
+		print
+		print '=', project['project_name'], '='
 
-		for url in event['urls']:
-			record = get_record(url)
-			db.insert(record.to_json())
-			print record
+		for event in project['events']:
+			print '[', event['event_name'], ']'
+
+			for url in event['urls']:
+				record = get_record(url)
+				db.insert(record.to_json())
+				print record
 		
 
 class Record:
@@ -96,17 +107,11 @@ def read_url(url):
 	return urllib2.urlopen(req).read()
 
 def load_config():
-	if len(sys.argv) == 2:
-		project_conf = sys.argv[1]
+	with open('conf.json', 'r') as f:
+		conf = json.loads(f.read())
+	f.closed
 
-		with open(project_conf, 'r') as f:
-			conf = json.loads(f.read())
-		f.closed
+	return conf
 
-		return conf
-
-	else:
-		print 'Usage: ./monitor.py conf/conf_file.json'
-		exit(0)
-
-main()
+if __name__ == "__main__":
+	main()

@@ -1,0 +1,77 @@
+{
+	"monitor_name": "Projects Monitor",
+
+	"projects": [
+		{
+			"project_name": "Github Activity Checker",
+			"events": [
+				{
+					"event_name": "First release!",
+					"urls": [
+						"http://www.reddit.com/r/github/comments/4hzlt6/a_chrome_extension_to_display_project_activity_on.json", 
+						"https://www.reddit.com/r/javascript/comments/4hzkxh/a_chrome_extension_to_display_project_activity_on.json", 
+						"https://news.ycombinator.com/item?id=11635339",
+						"https://api.github.com/repos/MasterScrat/GithubActivityChecker"
+					]
+				}
+			]
+		},
+
+		{
+			"project_name": "Timelapses",
+			"events": [
+				{
+					"event_name": "Supermoon Rising over Lake Leman",
+					"urls": [
+						"https://www.reddit.com/r/schweiz/comments/2d6m85/supermoon_rising_over_lake_leman_oc_800x533/"
+					]
+				},
+
+				{
+					"event_name": "Sunset tonight from Chexbres, Switzerland",
+					"urls": [
+						"https://www.reddit.com/r/SkyPorn/comments/1tyhnv/sunset_tonight_from_chexbres_switzerland_oc/", 
+						"https://www.reddit.com/r/waterporn/comments/1tyhns/sunset_tonight_from_chexbres_switzerland_oc/"
+					]
+				},
+
+				{
+					"event_name": "Sunrise this morning over Lac Léman",
+					"urls": [
+						"https://www.reddit.com/r/gif/comments/1rwqk0/sunrise_this_morning_over_lac_l%C3%A9man_switzerland_oc/", 
+						"https://www.reddit.com/r/schweiz/comments/1rwde6/sunrise_this_morning_over_lac_l%C3%A9man_switzerland/"
+					]
+				}
+			]
+		},
+
+		{
+			"project_name": "Battleground Engine",
+
+			"events": [
+				{
+					"event_name": "Demo 1",
+					"urls": [
+						"https://www.reddit.com/r/javascript/comments/13y0ad/very_early_demo_of_the_battleground_engine_3d/", 
+						"https://www.reddit.com/r/isometric/comments/1nqrzn/early_demo_of_my_upcoming_isometric_html5_game/"
+					]
+				}
+			]
+		},
+
+		{
+			"project_name": "LumaKey Blog",
+
+			"events": [
+				{
+					"event_name": "Asana Post",
+					"urls": [
+						"https://news.ycombinator.com/item?id=10826398", 
+						"https://www.reddit.com/r/gtd/comments/3z5lou/task_tracking_why_i_gave_up_on_asana_after_15/",
+						"https://www.reddit.com/r/productivity/comments/3z5hu3/task_tracking_why_i_gave_up_on_asana_after_15/"
+					]
+				}
+			]
+		}
+	]
+}
