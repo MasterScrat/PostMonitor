@@ -39,7 +39,7 @@ def values():
 	data = sorted(data, key=lambda r: r['timestamp'])
 
 	# first need ordered full lists of timestamps and URLs
-	# plus map of all values
+	# plus build cache of all values
 	all_timestamps = []
 	all_event_urls = []
 	event_url_score = {}
@@ -53,9 +53,9 @@ def values():
 		if event_url not in all_event_urls:
 			all_event_urls.append(event_url)
 
+		# cache
 		if event_url not in event_url_score:
 			event_url_score[event_url] = {timestamp: {}}
-
 		event_url_score[event_url][timestamp] = record['score']
 
 	# then for each timestamp, for each URL: check if there's a value
