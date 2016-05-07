@@ -1,0 +1,25 @@
+<html>
+<head>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+</head>
+
+<body>
+<div id="graphdiv"></div>
+
+<script type="text/javascript">
+$(function() {
+	$.ajax({url: "http://localhost:8080/labels", dataType: "json",})
+	.done(function(labels) {
+		$.ajax({url: "http://localhost:8080/values", dataType: "json",})
+		.done(function(values) {
+			g = new Dygraph(document.getElementById("graphdiv"),
+				values,	{labels: labels, connectSeparatedPoints: true}
+			);
+		});
+	});
+});
+
+</script>
+</body>
+</html>
