@@ -18,7 +18,8 @@ def series():
 	data = db.all()
 
 	# TODO shouldn't the DB do all that stuff for us?!
-	data = sorted(data, key=lambda r: r['timestamp']) 
+	# use ElasticSearch instead!
+	data = sorted(data, key=lambda r: r['timestamp'])
 
 	# TODO should output series as 3 concatenated levels
 	grouped = {}
