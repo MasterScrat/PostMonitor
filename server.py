@@ -2,6 +2,7 @@
 
 import json
 import itertools
+import datetime
 
 from flask import Flask, request, redirect, url_for
 from tinydb import TinyDB, where
@@ -30,12 +31,20 @@ def series():
 
 	return print_json(grouped)
 
-@app.route('/values')
-def values():
+
+@app.route('/projects')
+@app.route('/projects/<project>')
+def projects(project = None):
 	# TODO shouldn't the DB do all that stuff for us?!
 	# use ElasticSearch instead!
+	# TODO do this processing client-side, return only /series
 
-	data = db.all()
+	if project is None:
+		data = db.all()
+	else:
+		data = db.search(where('project') == project)
+
+
 	data = sorted(data, key=lambda r: r['timestamp'])
 
 	# first need ordered full lists of timestamps and URLs
@@ -58,12 +67,13 @@ def values():
 			event_url_score[event_url] = {timestamp: {}}
 		event_url_score[event_url][timestamp] = record['score']
 
+
 	# then for each timestamp, for each URL: check if there's a value
 	# if yes put it, if not put null
 	formatted_values = []
 
 	for timestamp in all_timestamps:
-		timestamp_values = [timestamp]
+		timestamp_values = [int(timestamp*1000)]
 
 		for event_url in all_event_urls:
 
@@ -74,26 +84,20 @@ def values():
 
 		formatted_values.append(timestamp_values)
 
-	return print_json(formatted_values)
+	return print_json({'values': formatted_values, 'labels': ['x']+all_event_urls})
 
-@app.route('/labels')
-def labels():
-	data = db.all()
-	data = sorted(data, key=lambda r: r['timestamp'])
 
-	all_event_urls = ['x']
-	for record in data:
-		event_url = to_event_url(record)
-		if event_url not in all_event_urls:
-			all_event_urls.append(event_url)
-
-	return print_json(all_event_urls)
+def format_timestamp(timestamp):
+	return datetime.datetime.fromtimestamp(
+        int(timestamp)
+    ).strftime('%Y/%m/%d %H:%M:%S')
 
 def to_event_url(record):
 		return record['project'] +' - '+ record['event'] +' - '+ record['url']
 
 def print_json(obj):
 	return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '))
+
 
 @app.route('/clear')
 def clear():

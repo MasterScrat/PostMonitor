@@ -1,25 +1,43 @@
 <html>
+
 <head>
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	<title>PostMonitor</title>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.11.2/lodash.min.js"></script>
 </head>
 
 <body>
-<div id="graphdiv"></div>
+<div id="graph"></div>
+<div id="legend"></div>
 
 <script type="text/javascript">
+var d;
+
 $(function() {
-	$.ajax({url: "http://localhost:8080/labels", dataType: "json",})
-	.done(function(labels) {
-		$.ajax({url: "http://localhost:8080/values", dataType: "json",})
-		.done(function(values) {
-			g = new Dygraph(document.getElementById("graphdiv"),
-				values,	{labels: labels, connectSeparatedPoints: true}
-			);
-		});
+	$.ajax({url: "http://localhost:8080/projects", dataType: "json",})
+	.done(function(data) {
+		var values = data['values'];
+		var labels = data['labels'];
+
+		d = _(values)
+			.map(function(a) {a[0] = new Date(a[0]); return a;})
+			.value();
+
+		g = new Dygraph(document.getElementById("graph"),
+			values, 
+			{
+				labels: labels, 
+				connectSeparatedPoints: true,
+				labelsDiv: 'legend',
+				labelsSeparateLines: true,
+				hideOverlayOnMouseOut: false
+			}
+		);
 	});
 });
-
 </script>
+
 </body>
+
 </html>
