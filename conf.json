@@ -3,6 +3,20 @@
 
 	"projects": [
 		{
+			"project_name": "Test Set",
+			"events": [
+				{
+					"event_name": "First Set, FP 08/05/2016",
+					"urls": [
+						"https://www.reddit.com/r/technology/comments/4ianql/can_a_company_stop_you_from_writing_a_negative/", 
+						"https://www.reddit.com/r/instant_regret/comments/4iagnj/corn_on_drill_eating_gone_wrong_xpost_rwtf/", 
+						"https://www.reddit.com/r/interestingasfuck/comments/4ia2ib/unsettling_chemical_reaction/"
+					]
+				}
+			]
+		},
+
+		{
 			"project_name": "Github Activity Checker",
 			"events": [
 				{
