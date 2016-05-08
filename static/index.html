@@ -30,7 +30,7 @@ showProjectDataFromHash = function() {
 };
 
 showProjectData = function(project) {
-	$.ajax({url: "http://localhost:8080/projects/"+project, dataType: "json",})
+	$.ajax({url: "http://localhost:8080/dygraphs/"+project, dataType: "json",})
 	.done(function(data) {
 		var values = data['values'];
 		var labels = data['labels'];

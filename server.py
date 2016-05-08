@@ -18,8 +18,8 @@ def root():
 def all():
 	return json.dumps(db.all(), sort_keys=True, indent=4, separators=(',', ': '))
 
-@app.route('/series')
-def series():
+@app.route('/projects')
+def projects():
 	data = db.all()
 	data = sorted(data, key=lambda r: r['timestamp'])
 
@@ -32,10 +32,11 @@ def series():
 	return print_json(grouped)
 
 
-@app.route('/projects')
-@app.route('/projects/')
-@app.route('/projects/<project>')
-def projects(project = None):
+# Dygraphs specific format
+@app.route('/dygraphs')
+@app.route('/dygraphs/')
+@app.route('/dygraphs/<project>')
+def dygraphs(project = None):
 	# TODO shouldn't the DB do all that stuff for us?!
 	# use ElasticSearch instead!
 	# TODO do this processing client-side, return only /series
@@ -67,7 +68,7 @@ def projects(project = None):
 		# cache
 		if event_url not in event_url_score:
 			event_url_score[event_url] = {timestamp: {}}
-		event_url_score[event_url][timestamp] = record['score']
+		event_url_score[event_url][timestamp] = record['num_comments']
 
 	# then for each timestamp, for each URL: check if there's a value
 	# if yes put it, if not put null
