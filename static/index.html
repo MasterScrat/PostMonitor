@@ -12,15 +12,17 @@
 <div id="legend"></div>
 
 <script type="text/javascript">
-var d;
-
 $(function() {
-	showProjectData('');
+	showProjectDataFromHash();
 
 	$(window).bind('hashchange', function(a,b,c) {
-		showProjectData(window.location.hash.substr(1));
+		showProjectDataFromHash();
 	});
 });
+
+showProjectDataFromHash = function() {
+	showProjectData(window.location.hash.substr(1));
+};
 
 showProjectData = function(project) {
 	$.ajax({url: "http://localhost:8080/projects/"+project, dataType: "json",})
