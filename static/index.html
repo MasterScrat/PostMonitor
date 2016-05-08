@@ -8,14 +8,22 @@
 </head>
 
 <body>
-<div id="graph"></div>
+<div id="graph"></div><br>
 <div id="legend"></div>
 
 <script type="text/javascript">
 var d;
 
 $(function() {
-	$.ajax({url: "http://localhost:8080/projects", dataType: "json",})
+	showProjectData('');
+
+	$(window).bind('hashchange', function(a,b,c) {
+		showProjectData(window.location.hash.substr(1));
+	});
+});
+
+showProjectData = function(project) {
+	$.ajax({url: "http://localhost:8080/projects/"+project, dataType: "json",})
 	.done(function(data) {
 		var values = data['values'];
 		var labels = data['labels'];
@@ -35,7 +43,7 @@ $(function() {
 			}
 		);
 	});
-});
+};
 </script>
 
 </body>

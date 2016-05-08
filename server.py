@@ -33,6 +33,7 @@ def series():
 
 
 @app.route('/projects')
+@app.route('/projects/')
 @app.route('/projects/<project>')
 def projects(project = None):
 	# TODO shouldn't the DB do all that stuff for us?!
