@@ -14,19 +14,20 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 # A Record is a set of numbers related to a Link at a point in time.
 
 # TODO
-# - web interface!
 # - add FB support (requires auth!)
 # - add Twitter support (https://github.com/bear/python-twitter)
 # - add WP support
 # - keep conf in DB
 # - add schedueling info per event? plus default value per project?
+# - generalise score/num_comments to array of metrics?
+# - generalise target/section to dict of meta?
 
 logging.basicConfig()
 db = TinyDB('data/records.json')
 sched = BlockingScheduler()
 
 def main():
-	sched.add_job(get_records, 'interval', id='monitor', seconds=15, max_instances=1)
+	sched.add_job(get_records, 'interval', id='monitor', seconds=60, max_instances=1)
 	sched.start()
 
 	#get_records()

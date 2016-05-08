@@ -5,43 +5,52 @@
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.11.2/lodash.min.js"></script>
-</head>
+	<script type="text/javascript" src="http://dygraphs.com/extras/synchronizer.js"></script>
 
-<body>
-<div id="graph"></div>
-<input type="button" value="Refresh" id="refresh"><br><br>
-<div id="legend"></div>
+	<style>
+	.chart { width: 500px; height: 300px; float: left; }
+	.chart-container { overflow: hidden; }
+	#div1 { float: left; }
+	#div2 { float: left; }
+	#div3 { float: left; clear: left; }
+	#div4 { float: left; }
+	</style>
 
-<script type="text/javascript">
-$(function() {
-	showProjectDataFromHash();
-
-	$(window).bind('hashchange', function(a,b,c) {
+	<script type="text/javascript">
+	// TODO use proper theme (http://blackrockdigital.github.io/startbootstrap-sb-admin ?)
+	// TODO this is getting hairy... switch to React?
+	$(function() {
 		showProjectDataFromHash();
+
+		$(window).bind('hashchange', function(a,b,c) {
+			showProjectDataFromHash();
+		});
+
+		$('#refresh').click(function() {
+			showProjectDataFromHash();
+		});
 	});
 
-	$('#refresh').click(function() {
-		showProjectDataFromHash();
-	});
-});
+	showProjectDataFromHash = function() {
+		showProjectData(window.location.hash.substr(1));
+	};
 
-showProjectDataFromHash = function() {
-	showProjectData(window.location.hash.substr(1));
-};
+	showProjectData = function(project) {
+		$.ajax({url: "http://localhost:8080/dygraphs/"+project, dataType: "json",})
+		.done(function(data) {
+			var scores = data['score'];
+			var num_comments = data['num_comments'];
+			var labels = data['labels'];
 
-showProjectData = function(project) {
-	$.ajax({url: "http://localhost:8080/dygraphs/"+project, dataType: "json",})
-	.done(function(data) {
-		var values = data['values'];
-		var labels = data['labels'];
+			_(scores)
+				.map(function(a) {a[0] = new Date(a[0]); return a;})
+				.value();
 
-		d = _(values)
-			.map(function(a) {a[0] = new Date(a[0]); return a;})
-			.value();
+			_(num_comments)
+				.map(function(a) {a[0] = new Date(a[0]); return a;})
+				.value();
 
-		g = new Dygraph(document.getElementById("graph"),
-			values, 
-			{
+			var dygraphsOptions = {
 				labels: labels, 
 				connectSeparatedPoints: true,
 				labelsDiv: 'legend',
@@ -49,12 +58,26 @@ showProjectData = function(project) {
 				hideOverlayOnMouseOut: false,
 				animatedZooms: true,
 				//logscale: true
-			}
-		);
-	});
-};
-</script>
+			};
 
+			var graph1 = new Dygraph(document.getElementById("graph1"), scores, dygraphsOptions);
+			var graph2 = new Dygraph(document.getElementById("graph2"), num_comments, dygraphsOptions);
+
+			var sync = Dygraph.synchronize([graph1, graph2], {
+				zoom: false,
+	          	selection: true
+			});
+		});
+	};
+	</script>
+</head>
+
+<body>
+	<div class="chart-container">
+	<div id="graph1" class="chart"></div>
+	<div id="graph2" class="chart"></div>
+	</div>
+	<input type="button" value="Refresh" id="refresh"><br><br>
+	<div id="legend"></div>
 </body>
-
 </html>

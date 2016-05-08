@@ -37,10 +37,7 @@ def projects():
 @app.route('/dygraphs/')
 @app.route('/dygraphs/<project>')
 def dygraphs(project = None):
-	# TODO shouldn't the DB do all that stuff for us?!
-	# use ElasticSearch instead!
-	# TODO do this processing client-side, return only /series
-
+	# TODO shouldn't the DB do most of that stuff for us?! use ElasticSearch!
 	db.clear_cache()
 	if project is None:
 		data = db.all()
@@ -55,9 +52,10 @@ def dygraphs(project = None):
 	all_timestamps = []
 	all_event_urls = []
 	event_url_score = {}
+	event_url_num_comments = {}
 
 	for record in data:
-		timestamp = record['timestamp']
+		timestamp = format_timestamp(record['timestamp'])
 		if timestamp not in all_timestamps:
 			all_timestamps.append(timestamp)
 
@@ -68,31 +66,38 @@ def dygraphs(project = None):
 		# cache
 		if event_url not in event_url_score:
 			event_url_score[event_url] = {timestamp: {}}
-		event_url_score[event_url][timestamp] = record['num_comments']
+			event_url_num_comments[event_url] = {timestamp: {}}
+
+		event_url_score[event_url][timestamp] = record['score']
+		event_url_num_comments[event_url][timestamp] = record['num_comments']
 
 	# then for each timestamp, for each URL: check if there's a value
 	# if yes put it, if not put null
-	formatted_values = []
+	formatted_scores = []
+	formatted_num_comments = []
 
 	for timestamp in all_timestamps:
-		timestamp_values = [int(timestamp*1000)]
+		timestamp = timestamp
+		timestamp_scores = [timestamp]
+		timestamp_num_comments = [timestamp]
 
 		for event_url in all_event_urls:
 
 			if timestamp in event_url_score[event_url]:
-				timestamp_values.append(event_url_score[event_url][timestamp])
+				timestamp_scores.append(event_url_score[event_url][timestamp])
+				timestamp_num_comments.append(event_url_num_comments[event_url][timestamp])
 			else:
-				timestamp_values.append(None)
+				timestamp_scores.append(None)
+				timestamp_num_comments.append(None)
 
-		formatted_values.append(timestamp_values)
+		formatted_scores.append(timestamp_scores)
+		formatted_num_comments.append(timestamp_num_comments)
 
-	return print_json({'values': formatted_values, 'labels': ['x']+all_event_urls})
+	return print_json({'score': formatted_scores, 'num_comments': formatted_num_comments, 'labels': ['x']+all_event_urls})
 
 
 def format_timestamp(timestamp):
-	return datetime.datetime.fromtimestamp(
-        int(timestamp)
-    ).strftime('%Y/%m/%d %H:%M:%S')
+	return int(timestamp*1000)
 
 def to_event_url(record):
 		return record['project'] +' - '+ record['event'] +' - '+ record['url']
