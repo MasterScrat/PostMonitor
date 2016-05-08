@@ -40,6 +40,7 @@ def projects(project = None):
 	# use ElasticSearch instead!
 	# TODO do this processing client-side, return only /series
 
+	db.clear_cache()
 	if project is None:
 		data = db.all()
 	else:
@@ -67,7 +68,6 @@ def projects(project = None):
 		if event_url not in event_url_score:
 			event_url_score[event_url] = {timestamp: {}}
 		event_url_score[event_url][timestamp] = record['score']
-
 
 	# then for each timestamp, for each URL: check if there's a value
 	# if yes put it, if not put null

@@ -25,12 +25,10 @@ logging.basicConfig()
 db = TinyDB('data/records.json')
 
 def main():
-	"""
 	sched = BlockingScheduler()
-	sched.add_job(get_records, 'interval', id='monitor', seconds=5, max_instances=1)
+	sched.add_job(get_records, 'interval', id='monitor', seconds=30, max_instances=1)
 	sched.start()
-	"""
-	get_records()
+	#get_records()
 
 def get_records():
 	conf = load_config()
