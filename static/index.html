@@ -8,7 +8,8 @@
 </head>
 
 <body>
-<div id="graph"></div><br>
+<div id="graph"></div>
+<input type="button" value="Refresh" id="refresh"><br><br>
 <div id="legend"></div>
 
 <script type="text/javascript">
@@ -16,6 +17,10 @@ $(function() {
 	showProjectDataFromHash();
 
 	$(window).bind('hashchange', function(a,b,c) {
+		showProjectDataFromHash();
+	});
+
+	$('#refresh').click(function() {
 		showProjectDataFromHash();
 	});
 });
@@ -42,6 +47,7 @@ showProjectData = function(project) {
 				labelsDiv: 'legend',
 				labelsSeparateLines: true,
 				hideOverlayOnMouseOut: false,
+				animatedZooms: true,
 				//logscale: true
 			}
 		);
